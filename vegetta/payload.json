@@ -1,0 +1,54 @@
+{
+  "data": {
+      "names": [
+          "gender",
+          "SeniorCitizen",
+          "Partner",
+          "Dependents",
+          "tenure",
+          "Premium",
+          "RelationshipManager",
+          "PrimaryChannel",
+          "HasCreditCard",
+          "DebitCard",
+          "IncomeProtection",
+          "WealthManagement",
+          "HomeEquityLoans",
+          "MoneyMarketAccount",
+          "CreditRating",
+          "PaperlessBilling",
+          "AccountType",
+          "MonthlyCharges",
+          "TotalCharges"
+      ],
+      "ndarray": [
+          [
+              "Female",
+              0,
+              "Yes",
+              "Yes",
+              1,
+              "Yes",
+              "Yes",
+              "Branch",
+              "Yes",
+              "Yes",
+              "Yes",
+              "No",
+              "Yes",
+              "Yes",
+              "Month-to-month",
+              "Yes",
+              "Checking",
+              100,
+              80
+          ]
+      ]
+  }
+}
+
+
+
+
+
+

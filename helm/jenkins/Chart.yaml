@@ -1,0 +1,9 @@
+apiVersion: v2
+name: jenkins-instance
+description: A default Jenkins operator and instance
+type: application
+version: 0.0.1
+appVersion: 0.0.1
+home: GITHUB LCOATION
+maintainers:
+  - name: masood_faisal

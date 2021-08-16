@@ -1,0 +1,10 @@
+minio:
+  persistence:
+    accessModes: ReadWriteOnce
+    volumeSize: 100Gi
+  image: docker.io/minio/minio:latest
+namespace: ml-workshop
+
+
+
+

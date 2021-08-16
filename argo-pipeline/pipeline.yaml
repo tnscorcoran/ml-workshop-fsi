@@ -1,0 +1,96 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: odh-retrain-scikit-
+spec:
+  entrypoint: odh-retrain-example
+  serviceAccountName: workflow
+  volumeClaimTemplates:
+  - metadata:
+      name: workdir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+  templates:
+  - name: odh-retrain-example
+    steps:
+    - - name: create-folder
+        template: create-folder
+    - - name: fetch-sources
+        template: fetch-sources
+    # - - name: install-requirements
+    #     template: install-requirements
+    - - name: preprocess
+        template: preprocess
+    - - name: train
+        template: train
+    - - name: validate
+        template: validate
+
+  - name: create-folder
+    # inputs:
+    #   parameters:
+    #   - name: message
+    container:
+      image: docker/whalesay:latest
+      command: [sh, -c]
+      # args: ["echo generating message in volume; cowsay hello world | tee /tmp/odh/hello_world.txt; chmod 777 -R /tmp/odh ; find /tmp/odh; cat /tmp/odh/hello_world.txt"]
+      args: ["mkdir -p /tmp/odh/data; mkdir -p /tmp/odh/model; chmod 777 -R /tmp/odh ; find /tmp/odh"]
+      volumeMounts:
+      - name: workdir
+        mountPath: /tmp/odh
+  - name: fetch-sources
+    container:
+      image: gcr.io/google_containers/git-sync:v3.0.1
+      command: [/git-sync]
+      env:
+        - name: GIT_SYNC_REPO
+          value: 'ARGO PIPELINE'
+        # - name: GIT_SYNC_DEST
+        #   value: source
+        - name: GIT_SYNC_BRANCH
+          value: master
+        - name: GIT_SYNC_ONE_TIME
+          value: 'true'
+        - name: GIT_SYNC_REV
+        - name: GIT_SYNC_ROOT
+          value: /tmp/odh/source
+      volumeMounts:
+      - mountPath: /tmp/odh
+        name: workdir
+  - name: install-requirements
+    container:
+      image: python:3.7-slim
+      command: [sh, -c]
+      args: ["pip install -r /tmp/odh/source/argo-pipeline.git/requirements.txt"]
+      volumeMounts:
+      - mountPath: /tmp/odh
+        name: workdir
+      
+  - name: preprocess
+    container:
+      image: python:3.7-slim
+      command: [sh, -c]
+      args: ["pip install -r /tmp/odh/source/argo-pipeline.git/requirements.txt; python /tmp/odh/source/argo-pipeline.git/components/preprocessing/preprocessing.py"]
+      volumeMounts:
+      - mountPath: /tmp/odh
+        name: workdir
+  - name: train
+    container:
+      image: python:3.7-slim
+      command: [sh, -c]
+      args: ["pip install -r /tmp/odh/source/argo-pipeline.git/requirements.txt; python /tmp/odh/source/argo-pipeline.git/components/training/training.py"]
+      volumeMounts:
+      - mountPath: /tmp/odh
+        name: workdir
+  - name: validate
+    container:
+      image: python:3.7-slim
+      command: [sh, -c]
+      args: ["pip install -r /tmp/odh/source/argo-pipeline.git/requirements.txt; python /tmp/odh/source/argo-pipeline.git/components/validating/validating.py"]
+      volumeMounts:
+      - mountPath: /tmp/odh
+        name: workdir        

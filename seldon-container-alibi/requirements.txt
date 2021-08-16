@@ -1,0 +1,7 @@
+alibi
+dill
+numpy
+seldon-core
+joblib
+scikit-learn
+category_encoders

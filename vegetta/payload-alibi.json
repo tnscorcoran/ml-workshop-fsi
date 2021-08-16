@@ -1,0 +1,13 @@
+{"data":
+{
+  "names":
+  [
+    "Premium","RelationshipManager","PrimaryChannel","HasCreditCard","DebitCard","IncomeProtection",
+    "WealthManagement","HomeEquityLoans","MoneyMarketAccount",
+    "CreditRating","PaperlessBilling","AccountType","MonthlyCharges","TotalCharges",
+    "gender",
+    "SeniorCitizen","Partner","Dependents","tenure"
+  ],
+  "ndarray": [["No","Not available","Mobile","No","Yes","No","No","No","No","Month-to-month","Yes","Checking",29.85,29.85, "Female",0,"Yes","No",1]]
+}
+}

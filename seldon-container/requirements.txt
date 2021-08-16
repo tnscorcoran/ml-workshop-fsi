@@ -1,0 +1,6 @@
+seldon-core
+joblib
+scikit-learn
+category_encoders
+dill
+

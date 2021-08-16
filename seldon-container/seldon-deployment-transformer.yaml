@@ -1,0 +1,79 @@
+apiVersion: machinelearning.seldon.io/v1alpha2
+kind: SeldonDeployment
+metadata:
+  labels:
+    app: seldon
+  name: model-EXPERIMENT_ID
+spec:
+  annotations:
+    project_name: customer-churn
+    deployment_version: "EXPERIMENT_ID"
+#     seldon.io/engine-separate-pod: "true"
+  name: customer-churn-seldon-spec
+  predictors:
+    - componentSpecs:
+      - hpaSpec:
+          maxReplicas: 5
+          metrics:
+          - resource:
+              name: cpu
+              targetAverageUtilization: 5
+            type: Resource
+          minReplicas: 1
+        spec:
+          containers:
+            - image: "image-registry.openshift-image-registry.svc:5000/IMAGE_NAME"
+              imagePullPolicy: Always
+              name: customerchurntransformer
+              env:
+                - name: MODEL_NAME
+                  value: CustomerChurnTransformer
+                - name: SERVICE_TYPE
+                  value: TRANSFORMER
+                - name: GRPC_PORT
+                  value: "5005"
+                - name: METRICS_PORT
+                  value: "6005"
+                - name: HTTP_PORT
+                  value: "9000"
+            - image: "image-registry.openshift-image-registry.svc:5000/IMAGE_NAME"
+              imagePullPolicy: Always
+              name: customerchurnpredictor
+              env:
+                - name: MODEL_NAME
+                  value: CustomerChurnPredictor
+                - name: SERVICE_TYPE
+                  value: MODEL
+                - name: GRPC_PORT
+                  value: "5008"
+                - name: METRICS_PORT
+                  value: "6008"
+                - name: HTTP_PORT
+                  value: "9001"
+
+
+      graph:
+        children:
+        - name: customerchurnpredictor
+          type: MODEL
+          endpoint:
+            type: REST
+            service_host: localhost
+            service_port: 9001
+
+        name: customerchurntransformer
+        endpoint:
+          type: REST
+          service_host: localhost
+          service_port: 9000
+        type: TRANSFORMER
+      name: predictor
+      annotations:
+        predictor_version: "EXPERIMENT_ID"
+        team: opendatahub
+#         seldon.io/svc-name: "EXPERIMENT_ID"
+      labels:
+        team: opendatahub
+        version: predictor
+
+      replicas: 1
